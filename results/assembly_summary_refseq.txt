@@ -1,1 +1,1 @@
-/Users/remingtonneal/Library/Mobile Documents/iCloud~md~obsidian/Documents/BYU Winter '26/Bio 465/Nextflow/work/d3/d541e714e6d59dc8c285e662ad8a38/assembly_summary_refseq.txt
+/Users/remingtonneal/Library/Mobile Documents/iCloud~md~obsidian/Documents/BYU Winter '26/Bio 465/Nextflow/work/55/13840fef25c5e1e374b4e1471fb8c3/assembly_summary_refseq.txt

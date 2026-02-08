@@ -109,6 +109,47 @@ process bedtools_call {
 
 }
 
+
+
+// ===================================
+// Align 16S genes
+// ===================================
+
+process combine_fastas {
+    input:
+    path ncbi_data
+
+    output:
+    path "combined_NCBI_16S_reads.fa"
+
+    script:
+    """
+    # for dir in ncbi_data_dir
+    # select reads=16S_*.fa 
+    # retitle 16S reads, add period and found order to end of accession
+    # cat reads >> combined_NCBI_16S_reads.fa (RADlib?)
+    """
+}
+
+process filter_distinct_16S_reads {
+    input:
+    path combined_16S_fasta
+
+    output:
+    path "aligned_NCBI_16S_regions.fa"
+
+    script:
+    """
+    # python script
+    # reads in all 16S reads
+    # creates a dict with reads as keys and value is tuple of accession and read
+    # appends accessions that have the same 16S reads
+    # outputs fastas titled ">read_num [accessions=...]\n16S gene"
+    """
+
+}
+
+
 // ===================================
 // WORKFLOW
 // ===================================
@@ -127,6 +168,7 @@ workflow DOWNLOAD_DATA{
     accessions = filter_bac_arch_accessions(ncbiRefSeq, filterScript)
     zippedWGS = get_accession_wgs_dehydrated(accessions, accessionLimit)
     accessionGenes = rehydrate_genomes(zippedWGS) 
+    println accessionGenes
 
     emit:
     ncbiRefSeq
@@ -134,25 +176,36 @@ workflow DOWNLOAD_DATA{
     zippedWGS
     accessionGenes
 }
+
+
 workflow EXTRACT_16S_RRNA_GENES{
     take:
-    data
+    data_dir
 
     main:
-    println data // Temp to avoid warnings
-    fastaFile = file(params.dataPath)
-    gff2File = barrnap_call(fastaFile)
-    all16Scopies = bedtools_call(gff2File, fastaFile)
+    println data_dir // Temp to avoid warnings
+    fastaFiles = file("$data_dir/**.fna")
+    pathChannel = channel.fromPath(fastaFiles)
+    gff2Files = barrnap_call(pathChannel)
+    all16Scopies = bedtools_call(gff2Files, fastaFiles)
 
     emit:
-    fastaFile
-    gff2File
+    // fastaFile
+    gff2Files
     all16Scopies
 }
 
-/*
- * workflow to clean out nextflow outputs?
-*/
+// ===================================
+// Align 16S genes
+// ===================================
+workflow ALIGN_16S_GENES{
+    // take:
+    // data
+
+    main:
+    println("TEMP!")
+}
+
 
 workflow{
     main:
@@ -161,10 +214,12 @@ workflow{
 
     // TODO: connect the previous and next steps to find all 16S reads
     // Extract 16S genes from whole genome
+
+    // Channel.fromPath("data/*/16S_reads_*.fa") gets a channel of all dirs and 16S fasta reads
     EXTRACT_16S_RRNA_GENES(DOWNLOAD_DATA.out.accessionGenes) // TODO: a channel should be involved here to speed up processing genomes
 
     publish:
-    downloadedData = DOWNLOAD_DATA.out.ncbiRefSeq
+    downloadedData = DOWNLOAD_DATA.out.accessionGenes
     gffs = EXTRACT_16S_RRNA_GENES.out.gff2File
     allReads = EXTRACT_16S_RRNA_GENES.out.all16Scopies
 }
