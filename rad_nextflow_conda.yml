@@ -1,0 +1,17 @@
+name: RAD_nextflow_conda
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+  - https://repo.anaconda.com/pkgs/main
+  - https://repo.anaconda.com/pkgs/r
+dependencies:
+  - barrnap
+  - bioconda::muscle
+  - ncbi-datasets-cli
+  - r
+  - r-essentials
+  - r-renv
+  - seqkit
+  - wget
+prefix: /opt/anaconda3/envs/RAD_nextflow_conda

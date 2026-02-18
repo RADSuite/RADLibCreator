@@ -1,2 +1,5 @@
 .nextflow*
+data/
+local_outputs/
+results/
 work/

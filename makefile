@@ -32,3 +32,12 @@ push_github_dev:
 # 	fi
 # 	echo "Continuing with the task..."
 # 	# Add more commands here
+
+build_docker_image: Dockerfile
+	docker build -t rad_nextflow_docker .
+
+test_docker:
+	nextflow run rad_workflow.nf -profile test,docker
+
+test_conda:
+	nextflow run rad_workflow.nf -profile test,conda	
