@@ -1,4 +1,5 @@
 .nextflow*
+*.sif
 data/
 local_outputs/
 results/
