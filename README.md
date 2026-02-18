@@ -6,3 +6,8 @@ The workflow can be run using:
  - Docker
  - Apptainer
  - or Conda
+
+## Reqirements
+
+Nextflow >25.10\
+...
