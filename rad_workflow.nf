@@ -124,13 +124,22 @@ process format_16S_fasta_files {
 
     script:
     """
+    TEMPFILE=\$(mktemp)
     mkdir -p formatted-16S-hits/${accession}
-    sed 's/16S_rRNA::.*\\.[0-9]/${accession}/g' ${fastaFile} > formatted-16S-hits/${accession}/16s_${accession}_formatted.fna
-    
+    sed 's/16S_rRNA::.*\\.[0-9]/${accession}/g' ${fastaFile} > \$TEMPFILE
+    # formatted-16S-hits/${accession}/16s_${accession}_formatted.fna
+    copy_num=1
+    while IFS= read -r line; do
+        if [[ "\$line" == ">"* ]]; then
+            line=\$(echo "\$line" | sed "s/:.*/.\$copy_num/")
+            ((copy_num++))
+        fi
+        echo "\$line" >> formatted-16S-hits/${accession}/16s_${accession}_formatted.fna 
+    done < "\$TEMPFILE"
     """
 }
 
-process combine_fastas { 
+process combine_fastas { //TODO: this portion will change when V region creation get's intigrated
     input:
     path fastaFiles
 
