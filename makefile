@@ -24,7 +24,7 @@ else
 	@read -p "Set git message: " GIT_MESSAGE; \
 	echo $${GIT_MESSAGE}; \
 	git commit -m "$${GIT_MESSAGE}"; \
-	git push -u origin main 
+	git push -u origin dev 
 endif
 
 build_docker_image: Dockerfile
