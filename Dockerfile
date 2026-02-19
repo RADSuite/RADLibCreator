@@ -11,5 +11,3 @@ RUN conda env create -f rad_nextflow_conda.yml \
     && conda clean -afy
 
 ENV PATH="/opt/conda/envs/RAD_nextflow_conda/bin:${PATH}"
-
-# TODO: use apt or other ubuntu/debian package manager to download all dependencies

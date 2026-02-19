@@ -124,7 +124,11 @@ process format_16S_fasta_files {
 
     script:
     """
+    # Create a temp file to store intermediary steps
     TEMPFILE=\$(mktemp)
+    # Removes temp file at the end of processing
+    trap 'rm -f "\$TMPFILE"' EXIT HUP INT TERM 
+    
     mkdir -p formatted-16S-hits/${accession}
     sed 's/16S_rRNA::.*\\.[0-9]/${accession}/g' ${fastaFile} > \$TEMPFILE
     # formatted-16S-hits/${accession}/16s_${accession}_formatted.fna
