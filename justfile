@@ -3,20 +3,8 @@ set shell := ["bash", "-cu"]
 CONTAINER_DEF_DIR := "container-files"
 WORKFLOW := "workflows/rad_workflow.nf"
 
-commands:
-	@echo "**Available commands**"
-	@echo "Builds:"
-	@echo " - build_docker_image"
-	@echo " - build_apptainer_image"
-	@echo "Run:"
-	@echo " - test_conda"
-	@echo " - test_docker"
-	@echo " - test_apptainer"
-	@echo "Github (For maintainers only):"
-	@echo " - push_github_main"
-	@echo " - push_github_dev"
-
 push_github_main:
+	#!/usr/bin/env bash
 	branch=$(git branch --show-current)
 	if [[ "$branch" != "main" ]]; then \
 		echo "You are not currently on the main branch" \
