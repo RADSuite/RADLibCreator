@@ -10,7 +10,7 @@ process get_16S_reads {
 
     output:
     path "16S-hits/${accessionName}/gff3_${accessionName}.gff3", emit: rrna_16S_gff3s
-    path "16S-hits/${accessionName}/16S_${accessionName}.fna", emit: rrna_16S_fastas
+    path "16S-hits/${accessionName}/16S_${accessionName}.fna", emit: rrna_16S_fastas, optional: true
 
     script:
     """
@@ -20,6 +20,10 @@ process get_16S_reads {
     barrnap --kingdom bac ${filePath} -outseq 16S-hits/${accessionName}/temp_16S_${accessionName}.fna \
         > 16S-hits/${accessionName}/gff3_${accessionName}.gff3
     seqkit grep -nr -p "16S" 16S-hits/${accessionName}/temp_16S_${accessionName}.fna > 16S-hits/${accessionName}/16S_${accessionName}.fna
+    if [[ ! -s 16S-hits/${accessionName}/16S_${accessionName}.fna ]]; then
+        echo "No 16S genes were found in ${accessionName}. Removing file"
+        rm 16S-hits/${accessionName}/16S_${accessionName}.fna
+    fi
     """
 
 }
