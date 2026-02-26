@@ -1,4 +1,4 @@
-name: Capstone-conda
+name: RAD_nextflow_conda
 channels:
   - bioconda
   - conda-forge
@@ -16,4 +16,5 @@ dependencies:
   - seqkit
   - pip
   - infernal
-prefix: /opt/anaconda3/envs/Capstone-conda
+  - sqlite
+prefix: /opt/anaconda3/envs/RAD_nextflow_conda

@@ -1,5 +1,12 @@
 .ONESHELL:
-.PHONY: push_github_main push_github_dev test_apptainer test_conda test_docker commands
+.PHONY: \
+	push_github_main \
+	push_github_dev \
+	build_docker_image \
+	build_apptainer_image \
+	test_apptainer \
+	test_conda \
+	test_docker commands
 
 CONTAINER_DEF_DIR := container-files
 CURR_BRANCH := $(shell git branch --show-current)
@@ -46,7 +53,7 @@ endif
 
 ## Docker
 build_docker_image: ${CONTAINER_DEF_DIR}/Dockerfile
-	docker build -t rad_nextflow_docker ${CONTAINER_DEF_DIR}
+	docker build --no-cache -t rad_nextflow_docker ${CONTAINER_DEF_DIR}
 
 test_docker:
 	nextflow run ${WORKFLOW} -profile test,docker
@@ -56,8 +63,9 @@ test_conda: ${CONTAINER_DEF_DIR}/rad_nextflow_conda.yml ${WORKFLOW}
 	nextflow run ${WORKFLOW} -profile test,conda
 
 ## Apptainer
-build_apptainer_image: ${CONTAINER_DEF_DIR}/rad_apptainer.def ${WORKFLOW} 
+${CONTAINER_DEF_DIR}/rad_apptainer.sif: ${CONTAINER_DEF_DIR}/rad_apptainer.def ${WORKFLOW} 
 	apptainer build ${CONTAINER_DEF_DIR}/rad_apptainer.sif $<
+build_apptainer_image: ${CONTAINER_DEF_DIR}/rad_apptainer.sif
 
 test_apptainer: ${CONTAINER_DEF_DIR}/rad_apptainer.sif ${WORKFLOW}
 	nextflow run ${WORKFLOW} -profile test,apptainer

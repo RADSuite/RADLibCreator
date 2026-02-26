@@ -7,7 +7,8 @@ COPY . .
 
 RUN apt-get update && apt-get install unzip
 
-RUN conda env create -f rad_nextflow_conda.yml \
-    && conda clean -afy
+RUN pwd
+
+RUN conda env create -f rad_nextflow_conda.yml 
 
 ENV PATH="/opt/conda/envs/RAD_nextflow_conda/bin:${PATH}"
