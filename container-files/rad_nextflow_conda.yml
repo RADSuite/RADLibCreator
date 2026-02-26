@@ -1,4 +1,4 @@
-name: RAD_nextflow_conda
+name: Capstone-conda
 channels:
   - bioconda
   - conda-forge
@@ -6,12 +6,14 @@ channels:
   - https://repo.anaconda.com/pkgs/main
   - https://repo.anaconda.com/pkgs/r
 dependencies:
-  - barrnap
-  - bioconda::muscle
-  - ncbi-datasets-cli
+  - r-renv
   - r
   - r-essentials
-  - r-renv
+  - barrnap
+  - nextflow
+  - ncbi-datasets-cli
+  - bioconda::muscle
   - seqkit
-  - wget
-prefix: /opt/anaconda3/envs/RAD_nextflow_conda
+  - pip
+  - infernal
+prefix: /opt/anaconda3/envs/Capstone-conda
