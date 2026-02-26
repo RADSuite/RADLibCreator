@@ -1,0 +1,3 @@
+[submodule "workflows/scripts/extract_regions_16s"]
+	path = workflows/scripts/extract_regions_16s
+	url = https://github.com/AlessioMilanese/extract_regions_16s.git

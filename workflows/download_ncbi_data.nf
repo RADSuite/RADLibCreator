@@ -25,19 +25,19 @@ process get_ncbi_genomes { // FIXME: need a more discriptive process title
     """
 }
 
-process filter_bac_arch_accessions {
-    input:
-    path ncbiRefSeq
-    path filterScript
+// process filter_bac_arch_accessions {
+//     input:
+//     path ncbiRefSeq
+//     path filterScript
 
-    output:
-    path "ncbi_accessions.tsv"
+//     output:
+//     path "ncbi_accessions.tsv"
 
-    script: // Convert this into an sql query. ncbi_accessions need to be in sqlite to export to metascope
-    """
-    awk -f $filterScript $ncbiRefSeq > ncbi_accessions.tsv
-    """
-}
+//     script: // Convert this into an sql query. ncbi_accessions need to be in sqlite to export to metascope
+//     """
+//     awk -f $filterScript $ncbiRefSeq > ncbi_accessions.tsv
+//     """
+// }
 
 process create_sqlite3_db {
     input:
