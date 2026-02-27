@@ -2,6 +2,7 @@
 // DOWNLOADING DATA FROM NCBI
 // ===================================
 process get_ncbi_genomes { // FIXME: need a more discriptive process title
+    label 'REQUIRES_INTERNET'
     conda 'container-files/rad_nextflow_conda.yml'
 
     output:
@@ -59,6 +60,7 @@ process create_sqlite3_db {
 }
 
 process get_accession_wgs_dehydrated {
+    label 'REQUIRES_INTERNET'
     conda 'container-files/rad_nextflow_conda.yml'
 
     input:
@@ -89,6 +91,7 @@ process get_accession_wgs_dehydrated {
 }
 
 process rehydrate_genomes {
+    executor = 'local'
     conda 'container-files/rad_nextflow_conda.yml'
     
     input:
