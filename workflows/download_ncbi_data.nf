@@ -91,7 +91,7 @@ process get_accession_wgs_dehydrated {
 }
 
 process rehydrate_genomes {
-    executor = 'local'
+    label 'REQUIRES_INTERNET'
     conda 'container-files/rad_nextflow_conda.yml'
     
     input:
