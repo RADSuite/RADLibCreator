@@ -58,10 +58,11 @@ workflow CREATE_RADLIB_16S{
     accessionNames = unformattedFastaFiles
                         .flatMap {file -> file.parent.getName()}
     format_16S_fasta_files(unformattedFastaFiles, accessionNames)
-    formattedFastas = format_16S_fasta_files.out.formattedFastas.collect()
-    radlib = combine_fastas(formattedFastas) // FIXME: This process gets broken down into multiple channels when it should conbine all previous outputs
+    formattedFastasList = format_16S_fasta_files.out.formattedFastas.collect()
+    radlib = combine_fastas(formattedFastasList) // FIXME: This process gets broken down into multiple channels when it should conbine all previous outputs
 
     emit:
-    formattedFastas
+    formatedFastaChannel = format_16S_fasta_files.out.formattedFastas
+    formattedFastasList
     radlib
 }

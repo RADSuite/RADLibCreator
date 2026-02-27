@@ -1,5 +1,11 @@
 # RADlib Create
 
+Clone repo:
+```{shell}
+git clone --recurse-submodules https://github.com/RADSuite/RADLibCreator.git 
+```
+
+
 RADlib Create is the workflow for regenerating RADlib files. It can also be 
 used to create custome RADlib libraries for research specific requirments.
 
