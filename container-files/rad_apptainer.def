@@ -4,7 +4,7 @@ From: nextflow/nextflow
 From: condaforge/mambaforge
 
 %files
-rad_nextflow_conda.yml
+container-files/rad_nextflow_conda.yml rad_nextflow_conda.yml
 
 %post
    apt-get -y update
