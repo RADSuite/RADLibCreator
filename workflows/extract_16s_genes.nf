@@ -18,10 +18,7 @@ process get_16S_reads {
     output_file="16S-hits/${accessionName}/16S_${accessionName}.fna"
     touch \$output_file
     barrnap --kingdom bac ${filePath} -outseq 16S-hits/${accessionName}/temp_16S_${accessionName}.fna \
-        > 16S-hits/${accessionName}/gff3_${accessionName}.gff3 2> err_${accessionName}.err
-    if [[ -e err_${accessionName}.err ]]; then 
-        return 0
-    fi
+        > 16S-hits/${accessionName}/gff3_${accessionName}.gff3 
     seqkit grep -nr -p "16S" 16S-hits/${accessionName}/temp_16S_${accessionName}.fna > 16S-hits/${accessionName}/16S_${accessionName}.fna
     if [[ ! -s 16S-hits/${accessionName}/16S_${accessionName}.fna ]]; then
         echo "No 16S genes were found in ${accessionName}. Removing file"
