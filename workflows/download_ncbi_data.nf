@@ -73,18 +73,20 @@ process get_accession_wgs_dehydrated {
     script:
     if (numAccessions > 0) { // Used for creating a smaller db for testing workflow
         """
+        accessions=\$(sqlite3 $accessions_db 'SELECT accession FROM accessionTaxa LIMIT $numAccessions;')
         datasets download genome accession \
             --dehydrated \
-            --inputfile <(sqlite3 $accessions_db 'SELECT accession FROM accessionTaxa LIMIT $numAccessions;') \
-            --include genome \
+            --inputfile <(echo "\$accessions") \
+            --include genome,gff3 \
             --filename ncbi_dataset.zip
         """
     } else { // Full download. Can take over 5 hours to complete depending on number of accessions to download
         """
+        accessions=\$(sqlite3 $accessions_db 'SELECT accession FROM accessionTaxa LIMIT $numAccessions;')
         datasets download genome accession \
             --dehydrated \
-            --inputfile <(sqlite3 $accessions_db 'SELECT accession FROM accessionTaxa;') \
-            --include genome \
+            --inputfile <(echo "\$accessions") \
+            --include genome,gff3 \
             --filename ncbi_dataset.zip
         """
     }
@@ -152,15 +154,18 @@ workflow {
         accessionLimit = -1
     }
     dehydrated = get_accession_wgs_dehydrated(refseq_db, accessionLimit)
+    rehydrated = rehydrate_genomes(dehydrated)
 
     publish:
     refseq_json = json_result
     database = refseq_db
     dehydrated = dehydrated
+    rehydrated = rehydrated
 }
 
 output{
     refseq_json{}
     database{}
     dehydrated{}
+    rehydrated{}
 }
