@@ -3,6 +3,10 @@
 // ===================================
 
 process get_v_regions{
+    errorStrategy 'ignore' // this software that is used here is prone to issues, ones I can't replicate outside of nextflow,
+                           // but it's not on every file so this will hopefully stop blocking the process
+                           // It will need corrected in the future, probably by rerighting the logic using the same
+                           // tools as the software but using strictly nextflow (don't write workflows in python, it's janky and hard to follow)
     input:
     val accession
     path accessions_16S_fasta
