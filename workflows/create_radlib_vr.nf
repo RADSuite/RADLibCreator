@@ -13,7 +13,7 @@ process get_v_regions{
 
     script:
     """
-    python3 ${extract_regions} -i ${accessions_16S_fasta} -o ${accession}_v_regions.fna
+    python ${extract_regions} -i ${accessions_16S_fasta} -o ${accession}_v_regions.fna
     """
 }
 
