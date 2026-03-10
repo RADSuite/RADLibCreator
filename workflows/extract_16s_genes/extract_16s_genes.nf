@@ -27,7 +27,7 @@ process extract_reads {
     script:
     """
     mkdir ${accession} && touch "${accession}/${accession}_16S_genes.fna"
-    bedtools getfasta -fi ${fasta} -bed ${filteredGff3} > "${accession}/${accession}_16S_genes.fna"
+    bedtools getfasta -s -fi ${fasta} -bed ${filteredGff3} > "${accession}/${accession}_16S_genes.fna"
     if [[ ! -s "${accession}/${accession}_16S_genes.fna" ]]; then
         rm "${accession}/${accession}_16S_genes.fna"
     fi
