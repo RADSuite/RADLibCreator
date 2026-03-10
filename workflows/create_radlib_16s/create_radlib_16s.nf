@@ -67,3 +67,7 @@ workflow CREATE_RADLIB_16S{
     formattedFastasList
     radlib
 }
+
+workflow {
+    println "Placeholder for cli workflow call"
+}

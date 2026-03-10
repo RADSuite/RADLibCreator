@@ -1,7 +1,7 @@
-include { DOWNLOAD_DATA } from "./download_ncbi_data.nf"
-include { EXTRACT_16S_RRNA_GENES } from "./extract_16s_genes.nf"
-include { CREATE_RADLIB_16S } from "./create_radlib_16s.nf"
-include { CREATE_RADLIB_VR } from "./create_radlib_vr.nf"
+include { DOWNLOAD_DATA } from "./download_ncbi_data/download_ncbi_data.nf"
+include { EXTRACT_16S_RRNA_GENES } from "./extract_16s_genes/extract_16s_genes.nf"
+include { CREATE_RADLIB_16S } from "./create_radlib_16s/create_radlib_16s.nf"
+include { CREATE_RADLIB_VR } from "./create_radlib_vr/create_radlib_vr.nf"
 
 // TODO
 // ===================================

@@ -144,7 +144,7 @@ workflow DOWNLOAD_DATA{
 workflow {
     main:
     json_result = get_ncbi_genomes()
-    sql_scipt = file("${projectDir}/scripts/load_refseq_db.sql")
+    sql_scipt = file("${projectDir}/../scripts/load_refseq_db.sql")
     refseq_db = create_sqlite3_db(json_result, sql_scipt)
 
     def accessionLimit
