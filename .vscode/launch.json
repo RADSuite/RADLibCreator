@@ -1,0 +1,26 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "type": "perl",
+            "request": "launch",
+            "name": "Perl-Debug",
+            "program": "${workspaceFolder}/${relativeFile}",
+            "stopOnEntry": true,
+            "reloadModules": true
+        },
+        {
+            "type": "perl",
+            "request": "launch",
+            "name": "vxtract",
+            "program": "${workspaceFolder}/${relativeFile}",
+            "stopOnEntry": true,
+            "reloadModules": true,
+            "args": ["-r", "V1", "-o", "test.fasta", "../../work/1b/0c7cf1534210598a6fe57084eabbed/ncbi_data/ncbi_dataset/data/GCF_017313105.1/GCF_017313105.1_ASM1731310v1_genomic.fna"]
+        } 
+    ]
+}

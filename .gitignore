@@ -1,2 +1,9 @@
 .nextflow*
+*.sif
+data/
+local_outputs/
+results/
 work/
+misc/
+test_rad_outputs/
+*backup*
