@@ -20,3 +20,4 @@ Add process to download ncbi wgs accession2taxa files https://github.com/Derrick
 Add workflow create kraken2 database
 
 Add workflow to create MetaScope database
+
