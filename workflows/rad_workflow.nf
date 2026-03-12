@@ -17,10 +17,23 @@ include { CREATE_RADLIB_VR } from "./create_radlib_vr/create_radlib_vr.nf"
 workflow{
     main:
     // Downloading data from NCBI
-    DOWNLOAD_DATA()
+    // TODO: Add a check to see if data is already downloaded
+    // Used to allow the download step to take place before the rest of the workflow runs
+    // Beneficial for SLURM exicution
+    downloadedData = "${projectDir}/../downloaded-data/data"
+    if(!file(downloadedData).exists() || params.force_download){
+        println "${downloadedData} not found"
+        println "Downloading data from ncbi"
+        DOWNLOAD_DATA()
+        downloadedDataChannel = DOWNLOAD_DATA.out.accessionGenes
+        accessionsDir = downloadedDataChannel
+    } else {
+        println "Using previously downloaded data"
+        downloadedDataChannel = channel.of(file(downloadedData))
+        accessionsDir = downloadedDataChannel
+    }
 
     // Get 16S reads
-    accessionsDir = DOWNLOAD_DATA.out.accessionGenes
     EXTRACT_16S_RRNA_GENES(accessionsDir)
     
     // Create RADlib
@@ -31,7 +44,7 @@ workflow{
     CREATE_RADLIB_VR(CREATE_RADLIB_16S.out.formatedFastaChannel)
 
     publish:
-    downloadedData = DOWNLOAD_DATA.out.accessionGenes
+    downloadedData = downloadedDataChannel
     gff3s = EXTRACT_16S_RRNA_GENES.out.reads_16S_gffs
     fastas = EXTRACT_16S_RRNA_GENES.out.reads_16S_fastas
     formattedFastas = CREATE_RADLIB_16S.out.formattedFastasList
