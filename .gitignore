@@ -6,4 +6,6 @@ results/
 work/
 misc/
 test_rad_outputs/
+downloaded-data/
 *backup*
+workflows/secrets.config

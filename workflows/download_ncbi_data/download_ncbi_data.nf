@@ -14,15 +14,11 @@ process get_ncbi_genomes { // FIXME: need a more discriptive process title
     // wget -c -O assembly_summary_refseq.txt https://ftp.ncbi.nlm.nih.gov/genomes/refseq/assembly_summary_refseq.txt
     // """
     """
-    touch temp.json
     # Taxanomic IDs: Bacteria, 2; Archaea, 2157 (Needed because Bacteria is associated with multiple taxa labels)
     datasets summary genome taxon 2,2157 \
         --assembly-source RefSeq \
         --as-json-lines \
-        --assembly-version latest \
-        --reference > temp.json 
-    grep "wgs_contigs_url" temp.json > refseq_taxa_summary.json
-    rm temp.json
+        --reference > refseq_taxa_summary.json 
     """
 }
 
@@ -98,6 +94,7 @@ process rehydrate_genomes {
     
     input:
     path genomeDir
+    val API_KEY
 
     output:
     path "data/"
@@ -106,8 +103,12 @@ process rehydrate_genomes {
     """
     mkdir data
     unzip $genomeDir -d ncbi_data
-    datasets rehydrate --directory ncbi_data
-    mv ncbi_data/ncbi_dataset/data .
+    if [ -n "$API_KEY" ]; then 
+        datasets rehydrate --api-key $API_KEY --directory "ncbi_data"
+    else
+        datasets rehydrate --directory "ncbi_data"
+    fi
+    mv "ncbi_data/ncbi_dataset/data" .
     """
 }
 
@@ -124,15 +125,17 @@ workflow DOWNLOAD_DATA{
         accessionLimit = -1
     }
 
-    // ncbiRefSeq = get_ncbi_genomes()
-    // filterScript = file("${projectDir}/scripts/filter_assembly.awk")
-    // accessions = filter_bac_arch_accessions(ncbiRefSeq, filterScript)
-
     json_result = get_ncbi_genomes()
+
+    // SQL script used to format SQLite database when it is created
     sql_scipt = file("${projectDir}/scripts/load_refseq_db.sql")
+    if(!sql_scipt.exists()){ // Needed for running workflow independently
+        sql_scipt = file("${projectDir}/../scripts/load_refseq_db.sql") 
+    }
+
     refseq_db = create_sqlite3_db(json_result, sql_scipt)
     zippedWGS = get_accession_wgs_dehydrated(refseq_db, accessionLimit)
-    accessionGenes = rehydrate_genomes(zippedWGS) 
+    accessionGenes = rehydrate_genomes(zippedWGS, params.API_KEY ?: "") 
     accessionGenes.view()
 
     emit:
@@ -143,29 +146,16 @@ workflow DOWNLOAD_DATA{
 
 workflow {
     main:
-    json_result = get_ncbi_genomes()
-    sql_scipt = file("${projectDir}/../scripts/load_refseq_db.sql")
-    refseq_db = create_sqlite3_db(json_result, sql_scipt)
-
-    def accessionLimit
-    if (params.containsKey('limitAccession')){
-        accessionLimit = params.limitAccession
-    } else {
-        accessionLimit = -1
-    }
-    dehydrated = get_accession_wgs_dehydrated(refseq_db, accessionLimit)
-    rehydrated = rehydrate_genomes(dehydrated)
+    DOWNLOAD_DATA()
 
     publish:
-    refseq_json = json_result
-    database = refseq_db
-    dehydrated = dehydrated
-    rehydrated = rehydrated
+    refseq_db = DOWNLOAD_DATA.output.refseq_db
+    zippedWGS = DOWNLOAD_DATA.output.zippedWGS
+    accessionGenes = DOWNLOAD_DATA.output.accessionGenes
 }
 
 output{
-    refseq_json{}
-    database{}
-    dehydrated{}
-    rehydrated{}
+    refseq_db{} 
+    zippedWGS{}
+    accessionGenes{}
 }

@@ -1,18 +1,12 @@
 .mode tabs
-.import temp.tsv unfiltered
-
-CREATE TABLE filtered AS
-SELECT *
-FROM unfiltered
-WHERE "WGS URL" != "";
-
-DROP TABLE unfiltered;
+.import temp.tsv all_data
 
 CREATE TABLE accessionTaxa AS
 SELECT DISTINCT "Organism Taxonomic ID" AS "taxa", "Assembly Accession" AS "accession"
-FROM filtered;
+FROM all_data;
 
 CREATE TABLE names AS
 SELECT DISTINCT "Organism Taxonomic ID" AS "id", "Organism name" AS "name"
-FROM filtered;
+FROM all_data;
 
+DROP TABLE all_data;
