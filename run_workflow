@@ -1,0 +1,3 @@
+#! /usr/bin/env bash
+
+nextflow run workflow/rad_workflow.nf -profile apptainer,slurm -resume
