@@ -44,19 +44,19 @@ workflow{
     CREATE_RADLIB_VR(CREATE_RADLIB_16S.out.formatedFastaChannel)
 
     publish:
-    downloadedData = downloadedDataChannel
-    gff3s = EXTRACT_16S_RRNA_GENES.out.reads_16S_gffs
-    fastas = EXTRACT_16S_RRNA_GENES.out.reads_16S_fastas
-    formattedFastas = CREATE_RADLIB_16S.out.formattedFastasList
+    // downloadedData = downloadedDataChannel
+    // gff3s = EXTRACT_16S_RRNA_GENES.out.reads_16S_gffs
+    // fastas = EXTRACT_16S_RRNA_GENES.out.reads_16S_fastas
+    // formattedFastas = CREATE_RADLIB_16S.out.formattedFastasList
     radlib16s = CREATE_RADLIB_16S.out.radlib
     radlibvr = CREATE_RADLIB_VR.out.rad_vr
 }
 
 output {
-    downloadedData{}
-    gff3s{}
-    fastas{}
-    formattedFastas{}
+    // downloadedData{}
+    // gff3s{}
+    // fastas{}
+    // formattedFastas{}
     radlib16s{}
     radlibvr{}
 }

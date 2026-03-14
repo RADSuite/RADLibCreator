@@ -5,19 +5,24 @@ process get_ncbi_genomes { // FIXME: need a more discriptive process title
     label 'REQUIRES_INTERNET'
     conda 'container-files/rad_nextflow_conda.yml'
 
+    input:
+    env 'NCBI_API_KEY'
+
     output:
     // path "assembly_summary_refseq.txt"
     path "refseq_taxa_summary.json"
 
     script:
-    // """
-    // wget -c -O assembly_summary_refseq.txt https://ftp.ncbi.nlm.nih.gov/genomes/refseq/assembly_summary_refseq.txt
-    // """
     """
+    USE_KEY=""
+    if [ -n "\$NCBI_API_KEY" ]; then
+        USE_KEY="--api-key \$NCBI_API_KEY"
+    fi
     # Taxanomic IDs: Bacteria, 2; Archaea, 2157 (Needed because Bacteria is associated with multiple taxa labels)
     datasets summary genome taxon 2,2157 \
         --assembly-source RefSeq \
         --as-json-lines \
+        \$USE_KEY \
         --reference > refseq_taxa_summary.json 
     """
 }
@@ -94,7 +99,7 @@ process rehydrate_genomes {
     
     input:
     path genomeDir
-    val API_KEY
+    env 'NCBI_API_KEY'
 
     output:
     path "data/"
@@ -103,11 +108,11 @@ process rehydrate_genomes {
     """
     mkdir data
     unzip $genomeDir -d ncbi_data
-    if [ -n "$API_KEY" ]; then 
-        datasets rehydrate --api-key $API_KEY --directory "ncbi_data"
-    else
-        datasets rehydrate --directory "ncbi_data"
+    USE_KEY=""
+    if [ -n "\$NCBI_API_KEY" ]; then
+        USE_KEY="--api-key \$NCBI_API_KEY"
     fi
+    datasets rehydrate \$USE_KEY --directory "ncbi_data"
     mv "ncbi_data/ncbi_dataset/data" .
     """
 }
@@ -125,7 +130,7 @@ workflow DOWNLOAD_DATA{
         accessionLimit = -1
     }
 
-    json_result = get_ncbi_genomes()
+    json_result = get_ncbi_genomes(params.NCBI_API_KEY)
 
     // SQL script used to format SQLite database when it is created
     sql_scipt = file("${projectDir}/scripts/load_refseq_db.sql")
@@ -135,7 +140,7 @@ workflow DOWNLOAD_DATA{
 
     refseq_db = create_sqlite3_db(json_result, sql_scipt)
     zippedWGS = get_accession_wgs_dehydrated(refseq_db, accessionLimit)
-    accessionGenes = rehydrate_genomes(zippedWGS, params.API_KEY ?: "") 
+    accessionGenes = rehydrate_genomes(zippedWGS, params.NCBI_API_KEY ?: "") 
     accessionGenes.view()
 
     emit:
