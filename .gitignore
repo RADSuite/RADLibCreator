@@ -1,11 +1,14 @@
+# Directories
 .nextflow*
-*.sif
 data/
 local_outputs/
 results/
 work/
 misc/
 test_rad_outputs/
+extracted-16S-reads/
 downloaded-data/
+RADlib16s/
+# Other
+*.sif
 *backup*
-workflows/secrets.config

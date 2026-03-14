@@ -76,20 +76,29 @@ workflow CREATE_RADLIB_VR{
     accession16SFiles
 
     main:
-    // println("accessions 16s")
-    // println(accession16SFiles.get(0).view())
     accessionNames = accession16SFiles
                         .flatMap {file -> file.parent.name}
-    // println accessionNames.view()
     extract_v_regions_script = file("${projectDir}/scripts/extract_regions_16s/extract_regions")
     v_region_fastas_channel = get_v_regions(accessionNames, accession16SFiles, extract_v_regions_script)
-    v_region_fastas = v_region_fastas_channel.collect()
-    rad_vr = combine_v_region_fastas(v_region_fastas)
+    rad_vr = v_region_fastas_channel.collectFile(name: "RADlibVR")
 
     emit:
     rad_vr
 }
 
 workflow {
-    println "Placeholder for cli workflow call"
+    main:
+    extracted16s = "${projectDir}/../../extracted-16S-reads"
+    if(!file(extracted16s).exists()){
+        println "${extracted16s} not found"
+    }
+    fasta_channel = channel.fromPath("$extracted16s/**/*.fna")
+    CREATE_RADLIB_VR(fasta_channel)
+
+    publish:
+    radlibvr = CREATE_RADLIB_VR.output.rad_vr
+}
+
+output {
+    radlibvr{}
 }

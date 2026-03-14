@@ -101,5 +101,19 @@ workflow EXTRACT_16S_RRNA_GENES{
 }
 
 workflow {
-    EXTRACT_16S_RRNA_GENES("/dev/nul")
+    main:
+    downloadedData = "${projectDir}/../../downloaded-data/data"
+    if(!file(downloadedData).exists()){
+        println "${downloadedData} not found"
+    }
+    EXTRACT_16S_RRNA_GENES(channel.of(file(downloadedData)))
+
+    publish:
+    fastas = EXTRACT_16S_RRNA_GENES.output.reads_16S_fastas
+    gff = EXTRACT_16S_RRNA_GENES.output.reads_16S_gffs
+}
+
+output {
+    fastas{}
+    gff{}
 }
