@@ -17,7 +17,6 @@ one on NBNI and then adding a nextflow secret
 nextflow sectret set NCBI_API_KEY <your key>
 ```
 
-
 ## Profiles
 There are multiple profiles to add to change exicution
 - `docker`

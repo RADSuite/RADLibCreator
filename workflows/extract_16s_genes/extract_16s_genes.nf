@@ -54,7 +54,7 @@ process format_headers {
     organismName=\$(sqlite3 $accessions_db "SELECT name FROM names WHERE id = \$taxId")
 
     # Organize header data
-    headerSuffix="|taxid=\$taxId organism=\\"\$organismName\\""
+    headerSuffix=" taxid=\$taxId organism=\\"\$organismName\\""
     declare -a geneAccession=( \$(grep -o "locus_tag=.*;" $filteredGff3 | sed -e 's/;.*//' -e 's/locus_tag=//') )
 
     # Update header
