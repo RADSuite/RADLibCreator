@@ -17,7 +17,16 @@ process get_v_regions{
 
     script:
     """
-    python ${extract_regions} -i ${accessions_16S_fasta} -o ${accession}_v_regions.fna
+    modified_fasta=\$(mktemp)
+    extracted_fasta=\$(mktemp)
+
+    # This is needed because the python script used removes everything after the first white space
+    sed 's/ /%/g' ${accessions_16S_fasta} > "\${modified_fasta}"
+    python ${extract_regions} -i "\${modified_fasta}" -o "\${extracted_fasta}" 
+
+    sed 's/%/ /g' "\${extracted_fasta}" |
+    sed 's/__V/ variable_region=/g' > "${accession}_v_regions.fna" 
+    rm "\${modified_fasta}" "\${extracted_fasta}"
     """
 }
 
@@ -78,7 +87,12 @@ workflow CREATE_RADLIB_VR{
     main:
     accessionNames = accession16SFiles
                         .flatMap {file -> file.parent.name}
+    
     extract_v_regions_script = file("${projectDir}/scripts/extract_regions_16s/extract_regions")
+    if(!extract_v_regions_script.exists()){ // Needed for running workflow independently
+        extract_v_regions_script = file("${projectDir}/../scripts/extract_regions_16s/extract_regions") 
+    }
+
     v_region_fastas_channel = get_v_regions(accessionNames, accession16SFiles, extract_v_regions_script)
     rad_vr = v_region_fastas_channel.collectFile(name: "RADlibVR")
 

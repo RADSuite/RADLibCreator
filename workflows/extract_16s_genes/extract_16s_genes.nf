@@ -13,7 +13,7 @@ process filter_gff3 {
     script:
     """
     mkdir ${accession} && touch ${accession}/filtered_${accession}.gff 
-    awk -F'\t' '\$3 == "rRNA" && \$9 ~ /16S/' $gff2File > ${accession}/filtered_${accession}.gff 
+    awk -F'\t' '(\$3 == "rRNA" && \$9 ~ /16S/) || \$0 ~ /^#/' $gff2File > ${accession}/filtered_${accession}.gff 
     """
 }
 
@@ -22,7 +22,9 @@ process extract_reads {
     tuple path(fasta), path(filteredGff3), val(accession)
 
     output:
-    path "${accession}/${accession}_16S_genes.fna", optional: true // there may not be any documented 16S genes in this accession
+    tuple path("${accession}/${accession}_16S_genes.fna"), 
+          path(filteredGff3), 
+          val(accession), optional: true // there may not be any documented 16S genes in this accession
 
     script:
     """
@@ -31,6 +33,42 @@ process extract_reads {
     if [[ ! -s "${accession}/${accession}_16S_genes.fna" ]]; then
         rm "${accession}/${accession}_16S_genes.fna"
     fi
+    """
+}
+
+process format_headers {
+    input:
+    tuple path(fasta),
+          path(filteredGff3), 
+          val(accession)
+    path accessions_db
+    output:
+        path("${accession}/${accession}_16S_genes.fna")
+
+    script:
+    """
+    # Get Tax ID from gff file metadata
+    taxId=\$(grep -oEm 1 "id=[0-9]+" $filteredGff3 | sed 's/id=//')
+
+    # Get organism name from sqlite db
+    organismName=\$(sqlite3 $accessions_db "SELECT name FROM names WHERE id = \$taxId")
+
+    # Organize header data
+    headerSuffix="|taxid=\$taxId organism=\\"\$organismName\\""
+    declare -a geneAccession=( \$(grep -o "locus_tag=.*;" $filteredGff3 | sed -e 's/;.*//' -e 's/locus_tag=//') )
+
+    # Update header
+    mkdir -p ${accession}
+    touch ${accession}/${accession}_16S_genes.fna
+    currAccession=0
+    while IFS= read -r line; do
+        # Process the line here
+        if [[ \$line = '>'* ]]; then
+            line=">\${geneAccession[\$currAccession]}\$headerSuffix"
+            ((++currAccession))
+        fi
+        echo "\$line" >> ${accession}/${accession}_16S_genes.fna
+    done < $fasta
     """
 }
 
@@ -54,6 +92,7 @@ process package_data{ // this packages all three channels into a single channel 
 workflow EXTRACT_16S_RRNA_GENES{
     take:
     data_dir
+    accessions_db
 
     main:
     // fastaChannel = data_dir
@@ -78,9 +117,11 @@ workflow EXTRACT_16S_RRNA_GENES{
                             .findAll { it -> it != null }
                     }
 
-    modified_gff_tuple = filter_gff3(tupled_data)
-    reads_16S_fastas = extract_reads(modified_gff_tuple)
-    reads_16S_gffs = modified_gff_tuple.map { tup -> tup[1] }
+    unformatted_reads_16S_fastas = filter_gff3(tupled_data)
+                        | extract_reads
+
+    // the ".first()" syntax converts the file channel into a value channel allowing it to be used for every input
+    reads_16S_fastas = format_headers(unformatted_reads_16S_fastas, accessions_db.first())
 
     // reads = get_16S_reads(fastaChannel, accessionNames)
     // reads_16S_fastas = reads.rrna_16S_fastas
@@ -96,24 +137,25 @@ workflow EXTRACT_16S_RRNA_GENES{
     emit:
     // fastaFile
     reads_16S_fastas
-    reads_16S_gffs
     // all16Scopies
 }
 
 workflow {
     main:
     downloadedData = "${projectDir}/../../downloaded-data/data"
+    accessions_db = "${projectDir}/../../downloaded-data/ncbi-accessions-data.db"
     if(!file(downloadedData).exists()){
         println "${downloadedData} not found"
     }
-    EXTRACT_16S_RRNA_GENES(channel.of(file(downloadedData)))
+    if(!file(accessions_db).exists()){
+        println "${downloadedData} not found"
+    }
+    EXTRACT_16S_RRNA_GENES(channel.of(file(downloadedData)), channel.of(file(accessions_db)))
 
     publish:
     fastas = EXTRACT_16S_RRNA_GENES.output.reads_16S_fastas
-    gff = EXTRACT_16S_RRNA_GENES.output.reads_16S_gffs
 }
 
 output {
     fastas{}
-    gff{}
 }

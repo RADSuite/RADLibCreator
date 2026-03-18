@@ -9,6 +9,7 @@ test_rad_outputs/
 extracted-16S-reads/
 downloaded-data/
 RADlib16s/
+RADlibVR/
 # Other
 *.sif
 *backup*
