@@ -25,6 +25,7 @@ process get_v_regions{
     python ${extract_regions} -i "\${modified_fasta}" -o "\${extracted_fasta}" 
 
     sed 's/%/ /g' "\${extracted_fasta}" |
+    sed '/^>/!s/U/T/g' |
     sed 's/__V/ variable_region=/g' > "${accession}_v_regions.fna" 
     rm "\${modified_fasta}" "\${extracted_fasta}"
     """
