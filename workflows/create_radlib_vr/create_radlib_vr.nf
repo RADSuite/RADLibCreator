@@ -36,12 +36,12 @@ process combine_v_region_fastas{
     path fastaFiles
 
     output:
-    path "RADlib_vr.fa"
+    path "RADlibVR.fa"
 
     script:
     """
     touch RADlib.fa
-    find . -name "*.fna" -exec cat {} + >> RADlib_vr.fa
+    find . -name "*.fna" -exec cat {} + >> RADlibVR.fa
     """
 }
 
@@ -95,7 +95,7 @@ workflow CREATE_RADLIB_VR{
     }
 
     v_region_fastas_channel = get_v_regions(accessionNames, accession16SFiles, extract_v_regions_script)
-    rad_vr = v_region_fastas_channel.collectFile(name: "RADlibVR")
+    rad_vr = v_region_fastas_channel.collectFile(name: "RADlibVR.fa")
 
     emit:
     rad_vr

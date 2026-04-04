@@ -132,7 +132,7 @@ workflow DOWNLOAD_DATA{
 
     json_result = get_ncbi_genomes(params.NCBI_API_KEY)
 
-    // SQL script used to format SQLite database when it is created
+   // SQL script used to format SQLite database when it is created
     sql_scipt = file("${projectDir}/scripts/load_refseq_db.sql")
     if(!sql_scipt.exists()){ // Needed for running workflow independently
         sql_scipt = file("${projectDir}/../scripts/load_refseq_db.sql") 

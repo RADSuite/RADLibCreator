@@ -10,6 +10,7 @@ extracted-16S-reads/
 downloaded-data/
 RADlib16s/
 RADlibVR/
+ncbi_dataset/
 # Other
 *.sif
 *backup*

@@ -1,38 +1,41 @@
-# RADlib Create
+# NCBI Datasets
 
-RADlib Create is the workflow for regenerating RADlib files. It can also be 
-used to create custome RADlib libraries for research specific requirments.
+https://www.ncbi.nlm.nih.gov/datasets
 
-RADlib are 16S rRNA libraries/databases used in microbiome research. Currently,
-RADlib is specialized for Human microbiome data.
+This zip archive contains an NCBI Datasets Data Package.
 
-Clone repo:
-```{shell}
-git clone --recurse-submodules https://github.com/RADSuite/RADLibCreator.git 
-```
+NCBI Datasets Data Packages can include sequence, annotation and other data files, and metadata in one or more data report files.
+Data report files are in JSON Lines format.
 
-You can optionally add an NCBI API key to speed up download time by creating
-one on NBNI and then adding a nextflow secret
-```{shell}
-nextflow sectret set NCBI_API_KEY <your key>
-```
+---
+## FAQs
+### Where is the data I requested?
 
-## Profiles
-There are multiple profiles to add to change exicution
-- `docker`
-    - Run using a docker container
-- `apptainer`
-    - Run using an apptainer container (recommended for hpc)
-- `conda`
-    - Create a conda env before execution with necissary packages
-- `autoClean`
-    - Use nf-boost's auto cleaning functionality (in development)
+Your data is in the subdirectory `ncbi_dataset/data/` contained within this zip archive.
 
+### I still can't find my data, can you help?
 
-## FUTURE 
+We have identified a bug affecting Mac Safari users. When downloading data from the NCBI Datasets web interface, you may see only this README file after the download has completed (while other files appear to be missing).
+As a workaround to prevent this issue from recurring, we recommend disabling automatic zip archive extraction in Safari until Apple releases a bug fix.
+For more information, visit:
+https://www.ncbi.nlm.nih.gov/datasets/docs/reference-docs/mac-zip-bug/
 
-Add process to download ncbi wgs accession2taxa files https://github.com/DerrickWood/kraken2/wiki/Manual#custom-databases
+### How do I work with JSON Lines data reports?
 
-Add workflow create kraken2 database
+Visit our JSON Lines data report documentation page:
+https://www.ncbi.nlm.nih.gov/datasets/docs/v2/tutorials/working-with-jsonl-data-reports/
 
-Add workflow to create MetaScope database
+### What is NCBI Datasets?
+
+NCBI Datasets is a resource that lets you easily gather data from across NCBI databases. Find and download gene, transcript, protein and genome sequences, annotation and metadata.
+
+### Where can I find NCBI Datasets documentation?
+
+Visit the NCBI Datasets documentation pages:
+https://www.ncbi.nlm.nih.gov/datasets/docs/
+
+---
+
+National Center for Biotechnology Information
+National Library of Medicine
+info@ncbi.nlm.nih.gov

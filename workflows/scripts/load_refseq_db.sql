@@ -1,6 +1,11 @@
 .mode tabs
 .import temp.tsv all_data
 
+-- Better import block
+-- sqlite> .mode ascii
+-- sqlite> .separator ";" "\n"
+-- sqlite> .import input.csv MyTable
+
 -- Make sure all data in Assembly Accession are accessions
 CREATE TABLE filtered_data AS
 SELECT *

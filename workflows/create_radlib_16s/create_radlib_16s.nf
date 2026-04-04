@@ -60,7 +60,7 @@ workflow CREATE_RADLIB_16S{
     format_16S_fasta_files(unformattedFastaFiles, accessionNames)
     formattedFastasList = format_16S_fasta_files.out.formattedFastas
 
-    radlib = formattedFastasList.collectFile(name: "RADlib.fa") // FIXME: This process gets broken down into multiple channels when it should conbine all previous outputs
+    radlib = formattedFastasList.collectFile(name: "RADlib16S.fa") // FIXME: This process gets broken down into multiple channels when it should conbine all previous outputs
 
     emit:
     formatedFastaChannel = format_16S_fasta_files.out.formattedFastas
