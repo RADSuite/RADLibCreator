@@ -6,15 +6,12 @@ channels:
   - https://repo.anaconda.com/pkgs/main
   - https://repo.anaconda.com/pkgs/r
 dependencies:
-  - r-renv
-  - r
-  - r-essentials
-  - barrnap
-  - nextflow
+  - barrnap=0.9
+  - nextflow=25.10.4.*
   - ncbi-datasets-cli
-  - bioconda::muscle
+  # - bioconda::muscle
   - seqkit
   - pip
   - infernal
-  - sqlite
+  - sqlite=3.*
 prefix: /opt/anaconda3/envs/RAD_nextflow_conda
