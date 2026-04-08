@@ -27,14 +27,16 @@ workflow{
         DOWNLOAD_DATA()
         downloadedDataChannel = DOWNLOAD_DATA.out.accessionGenes
         accessionsDir = downloadedDataChannel
+        accessions_db = DOWNLOAD_DATA.out.refseq_db
     } else {
         println "Using previously downloaded data"
         downloadedDataChannel = channel.of(file(downloadedData))
         accessionsDir = downloadedDataChannel
+        accessions_db = channel.of(file("${projectDir}/../downloaded-data/ncbi-accessions-data.db"))
     }
 
     // Get 16S reads
-    EXTRACT_16S_RRNA_GENES(accessionsDir)
+    EXTRACT_16S_RRNA_GENES(accessionsDir, accessions_db)
     
     // Create RADlib
     unformattedFastaFiles = EXTRACT_16S_RRNA_GENES.out.reads_16S_fastas
